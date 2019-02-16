@@ -1,26 +1,30 @@
 import sys
 import time
 
-ex_path = sys.argv[1]  # Path de l'exemplaire
+sys.setrecursionlimit(10**6)
 
-data = []
-
-fread = open(ex_path, "r")
-
-
-def quickSort(data_to_sort):
-    if len(data_to_sort) < 2:
+def quickSortSeuil(data_to_sort):
+    if len(data_to_sort) < 4:
         return bubbleSort(data_to_sort)
     else:
         pivot = data_to_sort[0]
         leftside = []
         rightside = []
-        for i in data_to_sort[1:]:
-            if i < pivot:
-                leftside.append(i)
+
+        j = len(data_to_sort) - 1
+        while j > 0:
+            if data_to_sort[j] < pivot:
+                leftside.append(data_to_sort[j])
             else:
-                rightside.append(i)
-    return quickSort(leftside) + [pivot] + quickSort(rightside)
+                rightside.append(data_to_sort[j])
+            j -= 1
+
+        # for i in data_to_sort[1:]:
+        #     if i < pivot:
+        #         leftside.append(i)
+        #     else:
+        #         rightside.append(i)
+    return quickSortSeuil(leftside) + [pivot] + quickSortSeuil(rightside)
 
 
 def bubbleSort(data_to_sort):
@@ -32,24 +36,39 @@ def bubbleSort(data_to_sort):
                 data_to_sort[j+1] = temp
     return data_to_sort
 
-with fread:
-    for line in fread:
-        data.append(int(line.strip()))
 
-# On commence a compter le temps uniquement pour le tri
-start_time = time.time()
 
-final_result = quickSort(data)
+def main():
+    data = []
 
-execution_time = time.time()-start_time
+    ex_path = sys.argv[1]  # Path de l'exemplaire
+    fread = open(ex_path, "r")
 
-options = sys.argv[2:]
-if '-p' in options:  # On imprime les nombres triés
-    for i in range(len(final_result)):
-        if i != len(final_result) - 1:
-            print(final_result[i], end=' ')
-        else:
-            print(final_result[i])
-if '-t' in options:  # On imprime le temps d'exécution
-    print(execution_time)
+    with fread:
+        for line in fread:
+            data.append(int(line.strip()))
+
+    print(max(data))
+
+    # On commence a compter le temps uniquement pour le tri
+    start_time = time.time()
+
+    final_result = quickSortSeuil(data)
+
+    execution_time = time.time() - start_time
+
+    options = sys.argv[2:]
+    if '-p' in options:  # On imprime les nombres triés
+        for i in range(len(final_result)):
+            if i != len(final_result) - 1:
+                print(final_result[i], end=' ')
+            else:
+                print(final_result[i])
+    if '-t' in options:  # On imprime le temps d'exécution
+        print(execution_time)
+
+
+if __name__ == '__main__':
+    main()
+
 

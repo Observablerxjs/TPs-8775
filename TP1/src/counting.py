@@ -1,41 +1,52 @@
 import sys
-import numpy as np
 import time
+import numpy as np
+import platform
 
-ex_path = sys.argv[1]  # Path de l'exemplaire
+def countingSort(data_to_sort):
+    max_value = max(data_to_sort)
+    final_result = []
+    result_table = np.zeros(max_value + 1, dtype='uint8')
 
-data = []
+    #change for while maybe
 
-fread = open(ex_path, "r")
+    for i in data_to_sort:
+        result_table[i] += 1
 
-with fread:
-    for line in fread:
-        data.append(int(line.strip()))
+    for i in range(0, len(result_table)):
+        for j in range(0, result_table[i]):
+            final_result.append(i)
 
-# On commence a compter le temps uniquement pour le tri
-start_time = time.time()
+    return final_result
 
-max_value = max(data)
 
-final_result = []
-result_table = np.zeros(max_value + 1).astype(int)
+def main():
+    data = []
 
-for i in data:
-    result_table[i] += 1
+    ex_path = sys.argv[1]  # Path de l'exemplaire
+    fread = open(ex_path, "r")
 
-for i in range(0, len(result_table)):
-    for j in range(0, result_table[i]):
-        final_result.append(i)
+    with fread:
+        for line in fread:
+            data.append(int(line.strip()))
 
-execution_time = time.time()-start_time
+    # On commence a compter le temps uniquement pour le tri
+    start_time = time.time()
 
-options = sys.argv[2:]
-if '-p' in options:  # On imprime les nombres triés
-    for i in range(len(final_result)):
-        if i != len(final_result) - 1:
-            print(final_result[i], end=' ')
-        else:
-            print(final_result[i])
-if '-t' in options:  # On imprime le temps d'exécution
-    print(execution_time)
+    final_result = countingSort(data)
 
+    execution_time = time.time() - start_time
+
+    options = sys.argv[2:]
+    if '-p' in options:  # On imprime les nombres triés
+        for i in range(len(final_result)):
+            if i != len(final_result) - 1:
+                print(final_result[i], end=' ')
+            else:
+                print(final_result[i])
+    if '-t' in options:  # On imprime le temps d'exécution
+        print(execution_time)
+
+
+if __name__ == '__main__':
+    main()
