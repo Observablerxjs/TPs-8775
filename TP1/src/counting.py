@@ -1,17 +1,19 @@
 import sys
 import time
 import numpy as np
-import platform
+
 
 def countingSort(data_to_sort):
+
     max_value = max(data_to_sort)
     final_result = []
+
     result_table = np.zeros(max_value + 1, dtype='uint8')
 
-    #change for while maybe
-
-    for i in data_to_sort:
-        result_table[i] += 1
+    k = len(data_to_sort) - 1
+    while k >= 0:
+        result_table[data_to_sort[k]] += 1
+        k -= 1
 
     for i in range(0, len(result_table)):
         for j in range(0, result_table[i]):
