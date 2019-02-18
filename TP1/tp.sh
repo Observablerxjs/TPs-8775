@@ -25,8 +25,4 @@ esac
 shift
 done
 
-#to add python3
-python ./src/$ALGO.py $EX_PATH $OPTIONS
-
-#to remove
-read
+python3 ./src/$ALGO.py $EX_PATH $OPTIONS
