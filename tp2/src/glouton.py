@@ -43,21 +43,23 @@ def startAlgo():
     sommeMax = 0
     j=0
     while j in range (0, 10):
+        start_time = time.time() 
         choice = glouton(data, int(new_data[i + 1 ]))
+        execution_time = time.time() - start_time
         results.append(choice)
         somme = choice[:,1].sum()
         if sommeMax < somme:
             bestChoice = choice
             sommeMax = somme
         j+=1
-    return bestChoice
+    return bestChoice, execution_time
 
 if __name__ == "__main__":
     ex_path = sys.argv[1] # Path de l'exemplaire
     options = sys.argv[2:]
-    start =time.time()
+    start_time =time.time()
     fread = open(ex_path, "r")
-    solution = startAlgo()
+    solution,execution_time = startAlgo()
     if '-p' in options: # On imprime les nombres triés
         for elem in solution[:, 0]:
             print(int(elem))
@@ -65,4 +67,4 @@ if __name__ == "__main__":
     if '-t' in options: # On imprime le temps d'exécution
         #start =time.time()
         fread.close()
-        print(time.time() - start)
+        print(execution_time)
