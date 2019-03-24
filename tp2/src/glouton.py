@@ -3,49 +3,49 @@ import time
 import numpy as np
 
 
-def glouton(emplacement, capacite):
+def glouton(data):
 
     solution = []
-    disp_data = emplacement
+    emplacements_disp = data['emplacements']
+    capacite = data['capacite']
 
     while capacite > 0:
 
-        disp_data = [x for x in disp_data if x[2] <= capacite]
+        emplacements_disp = [x for x in emplacements_disp if x[2] <= capacite]
 
-        if len(disp_data) == 0:
+        if len(emplacements_disp) == 0:
             return solution
 
-        rentabilite = np.zeros(len(disp_data))
-        data_index = np.arange(0, len(disp_data))
+        rentabilite = np.zeros(len(emplacements_disp))
+        data_index = np.arange(0, len(emplacements_disp))
 
         for i in range(len(rentabilite)):
-            rentabilite[i] = disp_data[i][1] / disp_data[i][2]
+            rentabilite[i] = emplacements_disp[i][1] / emplacements_disp[i][2]
 
         rentabilite_sum = rentabilite.sum()
-        probabilite = rentabilite / rentabilite_sum
+        probabilites = rentabilite / rentabilite_sum
 
-        idx = np.random.choice(a=data_index, p=probabilite)
+        idx = np.random.choice(a=data_index, p=probabilites)
 
-        capacite -= disp_data[idx][2]
-        solution.append(disp_data[idx])
-        disp_data.remove(disp_data[idx])
+        capacite -= emplacements_disp[idx][2]
+        solution.append(emplacements_disp[idx])
+        emplacements_disp.remove(emplacements_disp[idx])
 
     return solution
 
 
 def run(data):
 
-    results = []
     best_sol = []
     best_sum = 0
 
     for j in range(0, 10):
-        choice = glouton(data['emplacements'], data['capacite'])
-        results.append(choice)
 
-        somme = sum([x[1] for x in choice])
+        sol = glouton(data)
+        somme = sum([x[1] for x in sol])
+
         if best_sum < somme:
-            best_sol = choice
+            best_sol = sol
             best_sum = somme
 
     return best_sol, best_sum
