@@ -77,7 +77,7 @@ def main():
 
     execution_time = time.time() - start_time
 
-    if '-p' in options:  # On imprime les nombres triés
+    if '-p' in options:  # On imprime la solution
         print('Solution avec revenu = ' + str(max_revenu))
         for idx, place in enumerate(solution):
             end = ','
