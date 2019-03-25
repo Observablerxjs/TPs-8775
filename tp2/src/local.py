@@ -74,7 +74,7 @@ def main():
     print('execution_time', execution_time)
 
     if '-p' in options:  # On imprime la solution
-        print('Solution avec revenu = ' + str(best_sum))
+        # print('Solution avec revenu = ' + str(best_sum))
         for idx, place in enumerate(solution):
             end = ','
             if idx == len(solution) - 1:
