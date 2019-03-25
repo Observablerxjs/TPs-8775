@@ -51,10 +51,7 @@ def main():
         'capacite': 0
     }
 
-    # ex_path = sys.argv[1]  # Path de l'exemplaire
-
-    ex_path = "../exemplaires/WC-100-10-01.txt"  # Path de l'exemplaire
-
+    ex_path = sys.argv[1]  # Path de l'exemplaire
     options = sys.argv[2:]
 
     with open(ex_path, "r") as fp:
@@ -70,16 +67,7 @@ def main():
 
     solution, max_revenu = dynamic_programming(data)
 
-    print('Solution avec revenu = ' + str(max_revenu))
-    for idx, place in enumerate(solution):
-        end = ','
-        if idx == len(solution) - 1:
-            end = '\n'
-        print(place[0], end=end)
-
     execution_time = time.time() - start_time
-
-    print('exec_time', execution_time)
 
     if '-p' in options:  # On imprime la solution
         # print('Solution avec revenu = ' + str(max_revenu))

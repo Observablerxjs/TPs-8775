@@ -45,10 +45,8 @@ def main():
         'capacite': 0
     }
 
-    # ex_path = sys.argv[1]  # Path de l'exemplaire
+    ex_path = sys.argv[1]  # Path de l'exemplaire
     options = sys.argv[2:]
-
-    ex_path = "../exemplaires/WC-10000-10-01.txt"  # Path de l'exemplaire
 
     with open(ex_path, "r") as fp:
         for i, line in enumerate(fp):
@@ -63,15 +61,7 @@ def main():
 
     solution, best_sum = local_heuristic(data)
 
-    print('Solution avec revenu = ' + str(best_sum))
-    for idx, place in enumerate(solution):
-        end = ','
-        if idx == len(solution) - 1:
-            end = '\n'
-        print(place[0], end=end)
-
     execution_time = time.time() - start_time
-    print('execution_time', execution_time)
 
     if '-p' in options:  # On imprime la solution
         # print('Solution avec revenu = ' + str(best_sum))
