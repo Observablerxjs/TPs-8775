@@ -17,15 +17,12 @@ def glouton(data):
             return solution
 
         rentabilite = np.zeros(len(emplacements_disp))
-        data_index = np.arange(0, len(emplacements_disp))
-
         for i in range(len(rentabilite)):
             rentabilite[i] = emplacements_disp[i][1] / emplacements_disp[i][2]
-
         rentabilite_sum = rentabilite.sum()
         probabilites = rentabilite / rentabilite_sum
 
-        idx = np.random.choice(a=data_index, p=probabilites)
+        idx = np.random.choice(np.arange(0, len(emplacements_disp)), p=probabilites)
 
         capacite -= emplacements_disp[idx][2]
         solution.append(emplacements_disp[idx])

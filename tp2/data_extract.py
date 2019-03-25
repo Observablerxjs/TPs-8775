@@ -1,21 +1,26 @@
 from src.glouton import run
-# from src.heuristiqueLocale import heuristicLocale
-
+from src.local import local_heuristic
+from src.progdyn import dynamic_programming
 
 import csv
 import gc
 import time
 
-premiere_ligne = ["Taille", "Serie", "Exemplaire_ID", "Glouton", "Prog_dynamic","heuristic_local"]
+premiere_ligne = ["Taille", "Serie", "Glouton", "Revenue", "Prog_dynamic", "Revenue", "heuristic_local"
+                            , "Revenue"]
 with open('results.csv', 'a', newline='') as myfile:
     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
     wr.writerow(premiere_ligne)
 
-exemplaires_size = [100, 1000, 10000]
+exemplaires_size = [10000]
 exemplaire_serie = [10, 100, 1000]
 
 for size in exemplaires_size:
     for serie in exemplaire_serie:
+
+        exec_times = {'glouton': 0, 'dyn_prog': 0, 'heuristic_local': 0}
+        best_sums = {'glouton': 0, 'dyn_prog': 0, 'heuristic_local': 0}
+
         for i in range(1, 11):
             path = "exemplaires/WC-" + str(size) + "-" + str(serie) + "-" + str(i).zfill(2) + '.txt'
 
@@ -36,33 +41,42 @@ for size in exemplaires_size:
                     else:
                         data['capacite'] = int(line.strip())
 
-            new_line = [size, serie, i]
-
             print('environnement de test: Taille: ', size, ' serie: ', serie, ' exemplaire: ', i)
 
-            start_time = time.time()
-            run(data)
-            exec_time = time.time() - start_time
-            print("duration glouton : {}".format(exec_time))
-            new_line.append(exec_time)
-
             # start_time = time.time()
-            # # quickSort(data)
+            # best_G_sol, best_sum = run(data)
             # exec_time = time.time() - start_time
-            # print("duration quickSort : {}".format(exec_time))
-            new_line.append(0)
+            # print("duration glouton : {}".format(exec_time))
+            # exec_times['glouton'] += exec_time
+            # best_sums['glouton'] += best_sum
             #
             # start_time = time.time()
-            # # quickSortSeuil(data)
+            # best_LH_sol, best_sum = local_heuristic(data)
             # exec_time = time.time() - start_time
-            # print("duration quickSortSeuil : {}".format(exec_time))
-            new_line.append(0)
+            # print("duration local_heuristic : {}".format(exec_time))
+            # exec_times['heuristic_local'] += exec_time
+            # best_sums['heuristic_local'] += best_sum
+
+            start_time = time.time()
+            try:
+                best_DP_sol, best_sum = dynamic_programming(data)
+                print('max_revenu', best_sum)
+            except MemoryError as e:
+                print('(PROG_DYN)_ERROR IN: ', size, ' serie: ', serie, ' exemplaire: ', i)
+                best_sum = 0
+                pass
+            exec_time = time.time() - start_time
+            print("duration dynamic_programming : {}".format(exec_time))
+            exec_times['dyn_prog'] += exec_time
+            best_sums['dyn_prog'] += best_sum
 
             print('************************************************************')
 
-            with open('results.csv', 'a', newline='') as myfile:
-                wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-                wr.writerow(new_line)
+        new_line = [size, serie, exec_times['glouton']/10, best_sums['glouton']/10, exec_times['dyn_prog']/10,
+                    best_sums['dyn_prog']/10, exec_times['heuristic_local']/10, best_sums['heuristic_local']/10]
 
-            gc.collect()
+        with open('results_prog_dyn.csv', 'a', newline='') as myfile:
+            wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+            wr.writerow(new_line)
 
+        gc.collect()

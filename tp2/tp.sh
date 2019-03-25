@@ -24,7 +24,5 @@ case $key in
 esac
 shift
 done
-echo "exce"
 
 python3 ./src/$ALGO.py $EX_PATH $OPTIONS
-read
