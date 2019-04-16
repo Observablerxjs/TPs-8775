@@ -61,10 +61,9 @@ def find_best_model(data, piece_restantes):
 
 
 def find_least_cost_model(data, piece_restantes):
+
     cout = np.zeros(data['nbModeles'])
-
     max_value = piece_restantes.index(max(piece_restantes))
-
     valid_model = copy.deepcopy([x for x in data['modeles'] if x[max_value] != 0])
 
     for model in valid_model:
