@@ -11,36 +11,31 @@ def run(data):
     best_sol = np.zeros(data['nbTypes'])
 
     while 1:
-        try:
+        modeles = copy.deepcopy(data['modeles'])
+        np.random.shuffle(modeles)
+        sol = np.zeros(data['nbModeles'], dtype=int)
+        pieces_restantes = data['nbPieces']
 
-            modeles = copy.deepcopy(data['modeles'])
-            np.random.shuffle(modeles)
-            sol = np.zeros(data['nbModeles'], dtype=int)
-            pieces_restantes = data['nbPieces']
+        while sum([x for x in pieces_restantes if x > 0]) != 0:
+            if all(x > 0 for x in pieces_restantes):
+                rand_idx = randint(0, data['nbModeles'] - 1)
+                modele_choisi = modeles[rand_idx]
+            else:
+                modele_choisi = find_best_model(data, pieces_restantes)
+            pieces_restantes = list(map(operator.sub, pieces_restantes, modele_choisi))
+            sol[data['modeles'].index(modele_choisi)] += 1
 
-            while sum([x for x in pieces_restantes if x > 0]) != 0:
-                if all(x > 0 for x in pieces_restantes):
-                    rand_idx = randint(0, data['nbModeles'] - 1)
-                    modele_choisi = modeles[rand_idx]
-                else:
-                    modele_choisi = find_best_model(data, pieces_restantes)
-                pieces_restantes = list(map(operator.sub, pieces_restantes, modele_choisi))
-                sol[data['modeles'].index(modele_choisi)] += 1
+        cout = 0
 
-            cout = 0
+        for idx, nombre_requis in enumerate(pieces_restantes):
+            if nombre_requis < 0:
+                cout += data['prixPieces'][idx]*abs(nombre_requis)
 
-            for idx, nombre_requis in enumerate(pieces_restantes):
-                if nombre_requis < 0:
-                    cout += data['prixPieces'][idx]*abs(nombre_requis)
-
-            if best_cout > cout:
-                best_sol = sol
-                best_cout = cout
-                print('best_cout', best_cout)
-                print(" ".join(map(str, best_sol)))
-        # to remove
-        except KeyboardInterrupt:
-            break
+        if best_cout > cout:
+            best_sol = sol
+            best_cout = cout
+            print('best_cout', best_cout)
+            print(" ".join(map(str, best_sol)))
 
 
 def find_best_model(data, piece_restantes):
@@ -93,8 +88,7 @@ def main():
         'modeles': []
     }
 
-    # ex_path = sys.argv[1]  # Path de l'exemplaire
-    ex_path = './exemplaires/LEGO_100_100_2000'
+    ex_path = sys.argv[1]  # Path de l'exemplaire
 
     with open(ex_path, "r") as fp:
         for i, line in enumerate(fp):
