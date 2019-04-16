@@ -34,7 +34,6 @@ def run(data):
         if best_cout > cout:
             best_sol = sol
             best_cout = cout
-            print('best_cout', best_cout)
             print(" ".join(map(str, best_sol)))
 
 
