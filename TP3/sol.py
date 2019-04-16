@@ -15,12 +15,15 @@ def run(data):
 
             modeles = copy.deepcopy(data['modeles'])
             np.random.shuffle(modeles)
-            sol = np.zeros(data['nbTypes'], dtype=int)
+            sol = np.zeros(data['nbModeles'], dtype=int)
             pieces_restantes = data['nbPieces']
 
             while sum([x for x in pieces_restantes if x > 0]) != 0:
-                rand_idx = randint(0, data['nbModeles']-1)
-                modele_choisi = modeles[rand_idx]
+                if all(x > 0 for x in pieces_restantes):
+                    rand_idx = randint(0, data['nbModeles'] - 1)
+                    modele_choisi = modeles[rand_idx]
+                else:
+                    modele_choisi = find_best_model(data, pieces_restantes)
                 pieces_restantes = list(map(operator.sub, pieces_restantes, modele_choisi))
                 sol[data['modeles'].index(modele_choisi)] += 1
 
@@ -33,10 +36,52 @@ def run(data):
             if best_cout > cout:
                 best_sol = sol
                 best_cout = cout
+                print('best_cout', best_cout)
                 print(" ".join(map(str, best_sol)))
         # to remove
         except KeyboardInterrupt:
             break
+
+
+def find_best_model(data, piece_restantes):
+    modele_choisi = []
+    for modele in data['modeles']:
+        good_model = True
+        for idx, piece in enumerate(piece_restantes):
+            if piece <= 0 and modele[idx] != 0:
+                good_model = False
+        if good_model:
+            modele_choisi = modele
+            break
+
+    if not modele_choisi:
+        modele_choisi = find_least_cost_model(data, piece_restantes)
+
+    return modele_choisi
+
+
+def find_least_cost_model(data, piece_restantes):
+    cout = np.zeros(data['nbModeles'])
+
+    max_value = piece_restantes.index(max(piece_restantes))
+
+    valid_model = copy.deepcopy([x for x in data['modeles'] if x[max_value] != 0])
+
+    for model in valid_model:
+
+        temp = copy.deepcopy(piece_restantes)
+        temp = list(map(operator.sub, temp, model))
+
+        temp_cout = 0
+        for idx, nombre_requis in enumerate(temp):
+            if nombre_requis < 0:
+                temp_cout += data['prixPieces'][idx] * abs(nombre_requis)
+
+        cout[data['modeles'].index(model)] = temp_cout
+
+    modele_choisi = data['modeles'][np.where(cout == min(cout[np.nonzero(cout)]))[0][0]]
+
+    return modele_choisi
 
 
 def main():
@@ -50,7 +95,7 @@ def main():
     }
 
     # ex_path = sys.argv[1]  # Path de l'exemplaire
-    ex_path = './exemplaires/LEGO_50_50_1000'
+    ex_path = './exemplaires/LEGO_100_100_2000'
 
     with open(ex_path, "r") as fp:
         for i, line in enumerate(fp):
